@@ -1,6 +1,7 @@
 package mindustry.entities.abilities;
 
 import arc.*;
+import arc.util.io.*;
 import arc.scene.ui.layout.*;
 import mindustry.gen.*;
 import mindustry.type.*;
@@ -52,6 +53,14 @@ public abstract class Ability implements Cloneable{
             //I am disgusted
             throw new RuntimeException("java sucks", e);
         }
+    }
+
+    public void read(Reads read){
+
+    }
+
+    public void write(Writes write){
+
     }
 
     /** @return localized ability name; mods should override this. */

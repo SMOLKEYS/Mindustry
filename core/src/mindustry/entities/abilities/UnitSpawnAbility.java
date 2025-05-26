@@ -1,11 +1,14 @@
 package mindustry.entities.abilities;
 
 import arc.*;
+import arc.struct.*;
 import arc.graphics.g2d.*;
 import arc.math.*;
 import arc.scene.ui.layout.*;
 import arc.util.*;
+import arc.util.io.*;
 import mindustry.*;
+import mindustry.io.*;
 import mindustry.content.*;
 import mindustry.entities.*;
 import mindustry.game.EventType.*;

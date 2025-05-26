@@ -17,11 +17,13 @@ import static mindustry.Vars.*;
 
 public class UnitSpawnAbility extends Ability{
     public UnitType unit;
+    public int limit = -1;
     public float spawnTime = 60f, spawnX, spawnY;
     public Effect spawnEffect = Fx.spawn;
     public boolean parentizeEffects;
 
     protected float timer;
+    protected Seq<Unit> units = new Seq<>();
 
     public UnitSpawnAbility(UnitType unit, float spawnTime, float spawnX, float spawnY){
         this.unit = unit;
@@ -45,7 +47,9 @@ public class UnitSpawnAbility extends Ability{
     public void update(Unit unit){
         timer += Time.delta * state.rules.unitBuildSpeed(unit.team);
 
-        if(timer >= spawnTime && Units.canCreate(unit.team, this.unit)){
+        units.remove(u -> u.dead() || !u.isValid() || u.spawner != unit);
+
+        if(timer >= spawnTime && Units.canCreate(unit.team, this.unit) && units.size < limit){
             float x = unit.x + Angles.trnsx(unit.rotation, spawnY, -spawnX), y = unit.y + Angles.trnsy(unit.rotation, spawnY, -spawnX);
             spawnEffect.at(x, y, 0f, parentizeEffects ? unit : null);
             Unit u = this.unit.create(unit.team);
@@ -55,10 +59,16 @@ public class UnitSpawnAbility extends Ability{
             if(!Vars.net.client()){
                 u.add();
                 Units.notifyUnitSpawn(u);
+                spawned(u);
+                units.add(u);
             }
 
             timer = 0f;
         }
+    }
+
+    public void spawned(Unit spawnedUnit){
+        
     }
 
     @Override
@@ -69,6 +79,23 @@ public class UnitSpawnAbility extends Ability{
                 Drawf.construct(x, y, this.unit.fullIcon, unit.rotation - 90, timer / spawnTime, 1f, timer);
             });
         }
+    }
+
+    @Override
+    public void read(Reads read){
+        super.read(read);
+
+        for(int i = 0; i < read.i(); i++){
+            units.add(TypeIO.readUnit(read));
+        }
+    }
+
+    @Override
+    public void write(Writes write){
+        super.write(write);
+        
+        write.i(units.size);
+        units.each(u -> TypeIO.writeUnit(write, u));
     }
 
     @Override

@@ -19,6 +19,7 @@ public class DuctRouter extends Block{
     public float speed = 5f;
 
     public @Load(value = "@-top") TextureRegion topRegion;
+    public @Load(value = "@-center", fallback = "center") TextureRegion centerRegion;
 
     public DuctRouter(String name){
         super(name);
@@ -82,7 +83,7 @@ public class DuctRouter extends Block{
             Draw.rect(region, x, y);
             if(sortItem != null){
                 Draw.color(sortItem.color);
-                Draw.rect("center", x, y);
+                Draw.rect(centerRegion, x, y);
                 Draw.color();
             }else{
                 Draw.rect(topRegion, x, y, rotdeg());
